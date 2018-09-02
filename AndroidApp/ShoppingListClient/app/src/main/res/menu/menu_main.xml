@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="winters.shoppinglistclient.MainActivity"
+      android:id="@+id/corner_menu">
+    <item
+        android:id="@+id/action_filter"
+        android:orderInCategory="100"
+        android:title="Filter List"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+</menu>

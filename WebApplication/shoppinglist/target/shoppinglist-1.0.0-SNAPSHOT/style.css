@@ -1,0 +1,81 @@
+*
+{
+  font-family: "arial";
+}
+
+.tableDiv
+{
+  margin-top: 20px;
+  margin-bottom: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
+table, th, td
+{
+  border-collapse: collapse;
+}
+
+table
+{
+  width: 100%;
+}
+
+th
+{
+  font-weight: bold;
+  background-color: #0086b3;
+  color: white;
+}
+
+td
+{
+  border-bottom: 1px solid #888;
+}
+
+th, td
+{
+  padding: 10px 50px;  
+  text-align: left;
+}
+
+tr:hover
+{
+  background-color: #ddd;
+}
+
+a, .submitButton
+{
+  display: inline-block;
+  background-color: #0086b3;
+  color: white;
+  padding: 10px 40px;
+  text-align: center;
+  text-decoration: none;
+
+  border: 0px;
+  font-size: 14px;
+}
+
+a:hover, .submitButton:hover
+{
+  background-color: #00bfff;
+}
+
+select 
+{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 10px 40px;
+}
+
+.select-items div,.select-selected 
+{
+  color: #f00;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+}
