@@ -1,8 +1,8 @@
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/db/entity/EntryKey.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/RemoveItemServlet.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/db/entity/Entry.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/db/dao/DaoInterface.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/AppMainServlet.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/db/dao/Dao.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/MainServlet.java
-/home/jamie/NetBeansProjects/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/AddItemServlet.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/RemoveItemServlet.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/db/dao/DaoInterface.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/db/entity/Entry.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/AddItemServlet.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/AppMainServlet.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/db/entity/EntryKey.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/db/dao/Dao.java
+/home/jamie/ShoppingList/WebApplication/shoppinglist/src/main/java/com/winters/shoppinglist/servlet/MainServlet.java

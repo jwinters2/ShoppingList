@@ -15,9 +15,12 @@ import com.winters.shoppinglist.db.dao.Dao;
 import com.winters.shoppinglist.db.entity.Entry;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,6 +35,17 @@ public class MainServlet extends HttpServlet
 
     String user = null;
 
+    final String addItemName   = "<input class=\"addItemField\" type=\"text\" name=\"itemName\" value=\"\" onfocusout=\"detectTab(0)\" autofocus required>";
+    final String addItemAmount = "<input class=\"addItemField\" type=\"text\" name=\"itemAmount\" value=\"\" onfocusout=\"detectTab(1)\">";
+    final String addItemStore  = "<input class=\"addItemField\" type=\"text\" name=\"itemStore\" onfocusout=\"detectTab(2)\"  required>";
+    final String addItemNotes  = "<input class=\"addItemField\" type=\"text\" name=\"itemNotes\" value=\"\" onfocusout=\"detectTab(3)\">";
+
+    final String addItemNameIdFirst = "<input id=\"nameInput";
+    final String addItemNameIdLast = "\" class=\"addItemField\" type=\"text\" name=\"itemAmount\" value=\"\" onfocusout=\"detectTab(1)\" required>";
+
+    final String addItemStorePrefillBegin = "<input class=\"addItemField\" type=\"text\" name=\"itemStore\" value=\"";
+    final String addItemNotesPrefillEnd   = "\" onfocusout=\"detectTab(2)\"  required>";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
@@ -43,6 +57,7 @@ public class MainServlet extends HttpServlet
             out.println("<head>");
             out.println("<title>MainServlet</title>");            
             out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + request.getContextPath() + "/style.css\" />");
+            out.println("<link rel=\"icon\" type=\"image/png\" href=\"icon.png\" />");
 
             out.println("<script>");
 
@@ -92,6 +107,25 @@ public class MainServlet extends HttpServlet
             out.println("  }");
             out.println("}");
 
+            out.println("var lastEntryLostFocus = -1;");
+            out.println("var newEntryID = 0;");
+
+            out.println("function detectTab(entry)");
+            out.println("{");
+            out.println("  if(lastEntryLostFocus != entry)");
+            out.println("  {");
+            out.println("    lastEntryLostFocus = entry;");
+            out.println("  }");
+            out.println("}");
+
+            out.println("function onFocusAddNew()");
+            out.println("{");
+            out.println("  if(lastEntryLostFocus == 3)");
+            out.println("  {");
+            out.println("     document.getElementById(\"AddItemSubmitButton\").submit();");
+            out.println("  }");
+            out.println("}");
+
             out.println("</script>");
 
             out.println("</head>");
@@ -122,10 +156,10 @@ public class MainServlet extends HttpServlet
             out.println("<div class=\"tableDiv\">");
             out.println("<table id=\"mainTable\">");
             out.println("<tr>");
-            out.println("<th>Item</th>");
+            out.println("<th>Item *</th>");
             out.println("<th>Date</th>");
             out.println("<th>Amount</th>");
-            out.println("<th>Store</th>");
+            out.println("<th>Store *</th>");
             out.println("<th>Requested by</th>");
             out.println("<th>Notes</th>");
             out.println("</tr>");
@@ -152,15 +186,17 @@ public class MainServlet extends HttpServlet
             }
             if(Boolean.parseBoolean(request.getParameter("addItem")))
             {
-                out.println("<form action=\"AddItemServlet\">");
+                out.println("<form id=\"AddItemSubmitButton\" action=\"AddItemServlet\">");
                 out.println("<input type=\"hidden\" name=\"user\" value=\"" + user + "\">");
                 out.println("<tr>");
-                out.println("<td><input class=\"addItemField\" type=\"text\" name=\"itemName\" required></td>");
-                out.println("<td></td>");
-                out.println("<td><input class=\"addItemField\" type=\"text\" name=\"itemAmount\" value=\"\"></td>");
-                out.println("<td><input class=\"addItemField\" type=\"text\" name=\"itemStore\" required></td>");
-                out.println("<td></td>");
-                out.println("<td><input class=\"addItemField\" type=\"text\" name=\"itemNotes\" value=\"\"></td>");
+                out.println("<td> " + addItemName + " </td>");
+                LocalDateTime now = LocalDateTime.now();
+                out.println("<td>" + now.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " " + now.getDayOfMonth()+ "</td>");
+                out.println("<td> " + addItemAmount + " </td>");
+                String ls = request.getParameter("lastStore");
+                out.println("<td> " + addItemStorePrefillBegin + (ls == null ? "" : ls) + addItemNotesPrefillEnd + " </td>");
+                out.println("<td>" + request.getParameter("user") + "</td>");
+                out.println("<td> " + addItemNotes + " </td>");
                 out.println("</tr>");
             }
             out.println("</table>");
@@ -170,7 +206,8 @@ public class MainServlet extends HttpServlet
             if(Boolean.parseBoolean(request.getParameter("addItem")))
             {
                 out.println("<div class=\"tableDiv\">");
-                out.println("<input class=\"submitButton\" type=\"submit\" value=\"Confirm Add\">");
+                out.println("<input class=\"submitButton\" type=\"submit\" value=\"Confirm Add\" onfocusin=\"onFocusAddNew()\">");
+                out.println("<a href=\"MainServlet?user=" + request.getParameter("user") + "\">Back</a>");
                 out.println("</div>");
             }
             else
@@ -202,6 +239,10 @@ public class MainServlet extends HttpServlet
 
             // closes both possible forms
             out.println("</form>");
+
+            out.println("<div class=\"tableDiv\">");
+            out.println("<div class=\"req\">* Required Fields</div>");
+            out.println("</div>");
 
             out.println("</body>");
             out.println("</html>");

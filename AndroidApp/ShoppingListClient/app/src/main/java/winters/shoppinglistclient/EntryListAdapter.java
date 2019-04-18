@@ -55,10 +55,10 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.Entr
     public void onBindViewHolder(EntryViewHolder holder, int pos) {
         //holder.tv.setText(list.get(pos).getName());
         LinearLayout ll = (LinearLayout) holder.tv;
-
+        boolean moreInfo = !(list.get(pos).getAmount().isEmpty() && list.get(pos).getNotes().isEmpty());
         ((TextView)ll.getChildAt(0)).setText(list.get(pos).getName());
-        ((TextView)ll.getChildAt(1)).setText(list.get(pos).getAmount());
-        ((TextView)ll.getChildAt(2)).setText(list.get(pos).getStore());
+        ((TextView)ll.getChildAt(1)).setText(list.get(pos).getStore());
+        ((TextView)ll.getChildAt(2)).setText(moreInfo ? "..." : "");
 
         TextView[] children =
         {
@@ -134,7 +134,7 @@ public class EntryListAdapter extends RecyclerView.Adapter<EntryListAdapter.Entr
                 pw.showAtLocation(l.getRootView(), Gravity.CENTER, 0, 0);
 
                 LinearLayout lpv = (LinearLayout)(((RelativeLayout)pv).getChildAt(0));
-                ((TextView)lpv.getChildAt(0)).setText(e.getName());
+                ((TextView)lpv.getChildAt(0)).setText(e.getName() + "  (" + e.getAmount() + ")");
                 ((TextView)lpv.getChildAt(1)).setText("Requested on " + e.getDate() + " by " + e.getUser());
                 ((TextView)lpv.getChildAt(2)).setText(e.getNotes());
 

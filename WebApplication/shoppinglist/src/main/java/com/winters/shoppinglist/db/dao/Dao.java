@@ -49,6 +49,11 @@ public class Dao implements DaoInterface
 
     public int addItem(Entry entry)
     {
+      if(entry.getName().isEmpty() || entry.getStore().isEmpty())
+      {
+        return 2;
+      }
+
       try
       {
         tx.begin();

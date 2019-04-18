@@ -12,8 +12,9 @@ import java.util.HashMap;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.util.Pair;
 
-@Entity
+@Entity(tableName = "entry")
 public class Entry
 {
     @PrimaryKey
@@ -139,9 +140,9 @@ public class Entry
         '}';
     }
 
-    public static List<String> getUniqueStoreNames(List<Entry> entries)
+    public static List<Pair<String,Integer>> getUniqueStoreNames(List<Entry> entries)
     {
-        List<String> retval = new ArrayList<String>();
+        List<Pair<String,Integer>> retval = new ArrayList<Pair<String,Integer>>();
         Map<String, Integer> counts = new HashMap<String, Integer>();
         int anyCount = 0;
 
@@ -161,17 +162,18 @@ public class Entry
             }
         }
 
-        retval.add("Any   (" + entries.size() + ")");
+        retval.add(new Pair<String, Integer>("Any",entries.size()));
 
         for(Entry e : entries)
         {
             if(!e.getStore().equals("Any") && counts.containsKey(e.getStore()))
             {
-                retval.add(e.getStore() + "   (" + (anyCount + counts.get(e.getStore())) + ")");
+                retval.add(new Pair<String, Integer>(e.getStore(), anyCount + counts.get(e.getStore())));
                 counts.remove(e.getStore());
             }
         }
 
+        //retval.add(new Pair<String, Integer>("None",0));
         return retval;
     }
 

@@ -1,0 +1,8 @@
+com/winters/shoppinglist/servlet/AddItemServlet.class
+com/winters/shoppinglist/db/dao/Dao.class
+com/winters/shoppinglist/servlet/MainServlet.class
+com/winters/shoppinglist/db/entity/EntryKey.class
+com/winters/shoppinglist/servlet/RemoveItemServlet.class
+com/winters/shoppinglist/servlet/AppMainServlet.class
+com/winters/shoppinglist/db/entity/Entry.class
+com/winters/shoppinglist/db/dao/DaoInterface.class

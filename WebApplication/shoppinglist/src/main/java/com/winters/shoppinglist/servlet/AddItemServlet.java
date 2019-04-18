@@ -39,10 +39,32 @@ public class AddItemServlet extends HttpServlet
             out.println("<html>");
             out.println("<head>");
             out.println("<title>AddItemServlet</title>");            
-            out.println("<meta http-equiv=\"Refresh\" content=\"0;url=" + request.getContextPath() + "/MainServlet?user=" + request.getParameter("user") + "\">");
+            out.println("<meta http-equiv=\"Refresh\" content=\"0;url=" + request.getContextPath() + 
+              "/MainServlet?user=" + request.getParameter("user") + "&addItem=true&lastStore=" + request.getParameter("itemStore") + "\">");
             out.println("</head>");
             out.println("<body>");
             out.println("processing request ...");
+
+            /*
+            out.println("<ul>");
+            Enumeration<String> params = request.getParameterNames();
+            while(params.hasMoreElements())
+            {
+                String param = params.nextElement();
+                out.println("<li>" + param + "</li>");
+                String[] values = request.getParameterValues(param);
+                if(values != null && values.length != 0 && !values[0].isEmpty())
+                {
+                    out.println("<ul>");
+                    for(int i=0; i<values.length; i++)
+                    {
+                        out.println("<li>" + values[i] + "</li>");
+                    }
+                    out.println("</ul>");
+                }
+            }
+            out.println("</ul>");
+            */
 
             Entry entry = new Entry();
             entry.setName(request.getParameter("itemName"));
@@ -56,6 +78,10 @@ public class AddItemServlet extends HttpServlet
             if(result == 1)
             {
               out.println("<script>alert(\"Error: that item already exists\\n(" + entry.getName() + " from " + entry.getStore() + ")\");</script>");
+            }
+            else if(result == 2)
+            {
+              out.println("<script>alert(\"Error: Name and Store must not be empty\");</script>");
             }
 
             out.println("</body>");

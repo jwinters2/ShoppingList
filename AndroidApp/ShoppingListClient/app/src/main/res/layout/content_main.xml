@@ -12,7 +12,7 @@
     tools:context="winters.shoppinglistclient.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <!--
+
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:clickable="false">
@@ -26,14 +26,13 @@
         android:clipChildren="false"
         tools:listitem="@layout/entry_view"
         android:scrollbars="vertical"
-        android:scrollbarAlwaysDrawVerticalTrack="false"
-        android:clickable="true"/>
+        android:scrollbarAlwaysDrawVerticalTrack="false"/>
 
-    <include layout="@layout/empty" />
 
-    </FrameLayout> -->
 
-    <android.support.v7.widget.RecyclerView
+    </FrameLayout>
+
+    <!-- <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/mainlistview"
@@ -41,7 +40,7 @@
         android:clipChildren="false"
         tools:listitem="@layout/entry_view"
         android:scrollbars="vertical"
-        android:scrollbarAlwaysDrawVerticalTrack="false"/>
+        android:scrollbarAlwaysDrawVerticalTrack="false"/> -->
 
 
 </android.support.v4.widget.SwipeRefreshLayout>

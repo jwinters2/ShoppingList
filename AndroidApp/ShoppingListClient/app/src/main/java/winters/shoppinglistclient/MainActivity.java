@@ -11,6 +11,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.JsonReader;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
@@ -33,10 +34,18 @@ import java.io.IOException;
 
 import winters.shoppinglistclient.Persistence.ListDatabase;
 import winters.shoppinglistclient.Persistence.entity.Entry;
+import winters.shoppinglistclient.Persistence.entity.Property;
 
 import java.lang.ref.WeakReference;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.support.v7.widget.LinearLayoutManager;
 
@@ -61,11 +70,16 @@ public class MainActivity extends AppCompatActivity
     class ReadDBAsync extends AsyncTask<Void, Void, List<Entry>>
     {
         private WeakReference<Activity> wr = null;
+        private boolean uploadChanges = false;
 
         public ReadDBAsync(){}
         public ReadDBAsync(Activity activity)
         {
             wr = new WeakReference<Activity>(activity);
+        }
+        public ReadDBAsync(Boolean _uploadChanges)
+        {
+            uploadChanges = _uploadChanges;
         }
 
         @Override
@@ -85,6 +99,12 @@ public class MainActivity extends AppCompatActivity
             }
             table = result;
             showTable();
+
+            if(uploadChanges)
+            {
+                deleteItems();
+                getTableFromServlet();
+            }
         }
     }
 
@@ -116,6 +136,51 @@ public class MainActivity extends AppCompatActivity
             }
             return null;
         }
+    }
+
+    private class GetPropertyAsync extends AsyncTask<String, Void, String>
+    {
+        GetPropertyListener callback = null;
+        public GetPropertyAsync(GetPropertyListener gpl)
+        {
+            callback = gpl;
+        }
+
+        protected String doInBackground(String... strings)
+        {
+            if(strings.length > 0)
+            {
+                return listdb.propertyDao().getProperty(strings[0]);
+            }
+            return null;
+        }
+
+        protected void onPostExecute(String value)
+        {
+            if(callback != null)
+            {
+                callback.handleValue(value);
+            }
+        }
+    }
+
+    private interface GetPropertyListener
+    {
+        void handleValue(String value);
+    }
+
+    private class SetPropertyAsync extends AsyncTask<String, Void, Void>
+    {
+        protected Void doInBackground(String... strings)
+        {
+            if(strings.length > 1)
+            {
+                Property p = new Property(strings[0], strings[1]);
+                listdb.propertyDao().setProperty(p);
+            }
+            return null;
+        }
+
     }
 
     public static void setToDeleteInDB(Entry e)
@@ -166,7 +231,10 @@ public class MainActivity extends AppCompatActivity
 
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL));
 
-        getTableFromServlet();
+        new ReadDBAsync(true).execute();
+        //while(table == null) ;
+        //deleteItems();
+        //getTableFromServlet();
     }
 
     void getTableFromServlet()
@@ -265,6 +333,14 @@ public class MainActivity extends AppCompatActivity
             //return retval;
             table = retval;
             new WriteDBAsync().execute(table);
+            Calendar c = new GregorianCalendar();
+            c.setTime(new Date());
+            int hour = c.get(Calendar.HOUR);
+            int minute = c.get(Calendar.MINUTE);
+            String currentTime = "" + getMonthFromNumber(c.get(Calendar.MONTH)) + " " + c.get(Calendar.DAY_OF_MONTH)
+                               + ", " + hour
+                               + ":"  + (minute > 9 ? "" : "0") + minute + " " + (c.get(Calendar.AM_PM) == Calendar.PM ? "PM" : "AM");
+            new SetPropertyAsync().execute("lastUpdated", currentTime);
             showTable();
         }
         catch(IOException e)
@@ -316,8 +392,20 @@ public class MainActivity extends AppCompatActivity
         recyclerAdapter = new EntryListAdapter(Entry.filterList(table, currentStore));
         recyclerView.setAdapter(recyclerAdapter);
 
-        TextView tv = (TextView) findViewById(R.id.nothing_text_view);
-        //tv.setVisibility(table.isEmpty() ? TextView.VISIBLE : TextView.GONE);
+        //tv.setVisibility(TextView.VISIBLE);
+        new GetPropertyAsync(new GetPropertyListener()
+        {
+            @Override
+            public void handleValue(String value)
+            {
+                TextView tv = findViewById(R.id.last_updated_text_view);
+                if(value == null)
+                    Snackbar.make(recyclerView, "lastUpdated is null", Snackbar.LENGTH_SHORT).show();
+                else
+                    tv.setText("List last updated on " + value);
+            }
+        }).execute("lastUpdated");
+
     }
 
     private void showCouldNotConnectMessage()
@@ -355,7 +443,12 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_filter) {
             System.out.println("filter");
 
-            List<String> optionsList = Entry.getUniqueStoreNames(table);
+            final List<Pair<String, Integer>> storeList = Entry.getUniqueStoreNames(table);
+            final List<String> optionsList = new ArrayList<String>();
+            for(Pair<String, Integer> s : storeList)
+            {
+                optionsList.add(s.first + "  (" + s.second + ")");
+            }
 
             Spinner spinner = new Spinner(this, Spinner.MODE_DIALOG);
             //spinner.setGravity(Gravity.CENTER);
@@ -369,8 +462,8 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
                 {
-                    currentStore = ( i==0 ? "Any" : table.get(i - 1).getStore());
-                    finalItem.setTitle("Filter: " + currentStore);
+                    currentStore = storeList.get(i).first;
+                    finalItem.setTitle("Filter: " + storeList.get(i).first);
                     showTable();
                 }
 
@@ -388,5 +481,26 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private String getMonthFromNumber(int i)
+    {
+        switch(i+1)
+        {
+            case 1: return "Jan";
+            case 2: return "Feb";
+            case 3: return "Mar";
+            case 4: return "Apr";
+            case 5: return "May";
+            case 6: return "Jun";
+            case 7: return "Jul";
+            case 8: return "Aug";
+            case 9: return "Sep";
+            case 10: return "Oct";
+            case 11: return "Nov";
+            case 12: return "Dec";
+        }
+
+        return null;
     }
 }
